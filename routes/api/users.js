@@ -43,16 +43,13 @@ router.post("/login", validateLogin, async (req, res) => {
 router.put("/save/:id", async (req, res) => {
   let id = req.params.id;
   let logoData = req.body;
-  console.log("Logo Data ", logoData);
   if (logoData.logoSvg.length > 1) {
     let user = await User.findById(id);
     user.logos = [...user.logos, logoData];
     await user.save();
-    return res.send("New logo added into your account");
-  } else {
-    return res.status(400).send("Logo is not appear");
+    return res.send("logo added into your account");
   }
-  // console.log(logoData);
+  return res.status(400).send("Logo is not appear");
 });
 //Delete User's profile Logo
 router.put("/deleteLogo/:id/", async (req, res) => {
