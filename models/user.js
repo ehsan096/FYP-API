@@ -25,6 +25,14 @@ function validateUser(data) {
   });
   return schema.validate(data, { abortEarly: false });
 }
+function validateUpdate(data) {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(50).required(),
+    email: Joi.string().email().min(3).max(30).required(),
+    password: Joi.string().min(3).max(15),
+  });
+  return schema.validate(data, { abortEarly: false });
+}
 function validateUserLogin(data) {
   const schema = Joi.object({
     email: Joi.string().email().min(3).max(50).required(),
@@ -35,3 +43,4 @@ function validateUserLogin(data) {
 module.exports.User = User;
 module.exports.validate = validateUser; //for sign up
 module.exports.validateUserLogin = validateUserLogin; // for login
+module.exports.validateUpdate = validateUpdate; // for login

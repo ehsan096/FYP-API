@@ -8,6 +8,7 @@ const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const validateLogin = require("../../middlewares/validateLogin");
 const validateRegister = require("../../middlewares/validateRegister");
+const validateUpdated = require("../../middlewares/validateUpdated");
 const config = require("config");
 router.post("/register", validateRegister, async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
@@ -107,9 +108,8 @@ router.put("/save/:id/update", async (req, res) => {
   return res.status(400).send("Logo not found");
 });
 //update user
-router.put("/:id", async (req, res) => {
+router.put("/:id", validateUpdated, async (req, res) => {
   let user = await User.findById(req.params.id);
-  console.log("Request > ", req.body);
   user.name = req.body.name;
   user.email = req.body.email;
   if (req.body.password) {
