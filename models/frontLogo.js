@@ -1,11 +1,14 @@
 var mongoose = require("mongoose");
 const Joi = require("@hapi/joi");
-var logoSchema = mongoose.Schema({
+var frontLogoSchema = mongoose.Schema({
   name: {
     type: String,
     unique: true,
   },
-  category: String,
+  category: {
+    type: String,
+    unique: true,
+  },
   logotype: {
     type: String,
     default: "normal",
@@ -13,9 +16,9 @@ var logoSchema = mongoose.Schema({
   logoSvg: String,
   logoJson: String,
 });
-var Logo = mongoose.model("Logo", logoSchema);
+var FrontLogo = mongoose.model("FrontLogo", frontLogoSchema);
 
-function validateLogo(data) {
+function validateFrontLogo(data) {
   const schema = Joi.object({
     name: Joi.string().min(3).max(100).required(),
     category: Joi.string().min(3).max(100).required(),
@@ -24,5 +27,5 @@ function validateLogo(data) {
   });
   return schema.validate(data, { abortEarly: false });
 }
-module.exports.Logo = Logo;
-module.exports.validate = validateLogo;
+module.exports.FrontLogo = FrontLogo;
+module.exports.validateFrontLogo = validateFrontLogo;

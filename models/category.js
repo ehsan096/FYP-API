@@ -9,6 +9,9 @@ var categorySchema = mongoose.Schema({
   logoTitle: String,
   paragraph: String,
   svgString: String,
+  logoName: String,
+  logoSvg: String,
+  logoJson: String,
 });
 var Category = mongoose.model("Category", categorySchema);
 
@@ -19,6 +22,9 @@ function validateCategory(data) {
     logoTitle: Joi.string().min(3).required(),
     paragraph: Joi.string().min(3).required(),
     svgString: Joi.string().min(3).required(),
+    logoName: Joi.string().min(3).required(),
+    logoSvg: Joi.string().min(3).required(),
+    logoJson: Joi.string().min(3),
   });
   return schema.validate(data, { abortEarly: false });
 }
