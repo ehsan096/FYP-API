@@ -4,6 +4,7 @@ const validateCategory = require("../../middlewares/validateCategory");
 const auth = require("../../middlewares/auth");
 const admin = require("../../middlewares/admin");
 var { Category } = require("../../models/category");
+var { Logo } = require("../../models/logo");
 //get categories
 router.get("/", async (req, res) => {
   // console.log(req.user);
@@ -18,6 +19,16 @@ router.put("/:id", validateCategory, auth, admin, async (req, res) => {
   category.bannerTitle = req.body.bannerTitle;
   category.logoTitle = req.body.logoTitle;
   category.paragraph = req.body.paragraph;
+  category.logoName = req.body.logoName;
+  category.logoSvg = req.body.logoSvg;
+  category.logoJson = req.body.logoJson;
+  let logo = new Logo().find({ name: req.body.logoName });
+  logo.name = req.body.logoName;
+  logo.category = req.body.name;
+  logo.logoSvg = req.body.logoSvg;
+  logo.logoJson = req.body.logoJson;
+  await logo.save();
+
   await category.save();
   return res.send(category);
 });
@@ -33,6 +44,17 @@ router.post("/", validateCategory, auth, admin, async (req, res) => {
   category.bannerTitle = req.body.bannerTitle;
   category.logoTitle = req.body.logoTitle;
   category.paragraph = req.body.paragraph;
+  category.logoName = req.body.logoName;
+  category.logoSvg = req.body.logoSvg;
+  category.logoJson = req.body.logoJson;
+
+  let logo = new Logo();
+  logo.name = req.body.logoName;
+  logo.category = req.body.name;
+  logo.logoSvg = req.body.logoSvg;
+  logo.logoJson = req.body.logoJson;
+  await logo.save();
+
   await category.save();
   return res.send(category);
 });
