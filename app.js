@@ -7,7 +7,10 @@ var mongoose = require("mongoose");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/api/users");
 var logosRouter = require("./routes/api/logos");
+var iconsRouter = require("./routes/api/icons");
+var shapesRouter = require("./routes/api/shapes");
 var categoriesRouter = require("./routes/api/categories");
+var iconCategoriesRouter = require("./routes/api/iconCategories");
 var config = require("config");
 var cors = require("cors");
 var bodyParser = require("body-parser");
@@ -27,7 +30,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/logos", logosRouter);
+app.use("/api/icons", iconsRouter);
+app.use("/api/shapes", shapesRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/iconcategories", iconCategoriesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

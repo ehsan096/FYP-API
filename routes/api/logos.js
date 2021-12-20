@@ -27,7 +27,7 @@ router.delete("/:id", auth, admin, async (req, res) => {
   return res.send(logo);
 });
 //Insert a record
-router.post("/", validateLogo, auth, async (req, res) => {
+router.post("/", validateLogo, auth, admin, async (req, res) => {
   let logo = new Logo();
   logo.name = req.body.name;
   logo.category = req.body.category;
