@@ -20,6 +20,7 @@ router.put("/:id", validateCategory, auth, admin, async (req, res) => {
   category.logoTitle = req.body.logoTitle;
   category.paragraph = req.body.paragraph;
   category.logoName = req.body.logoName;
+  category.svgString = req.body.svgString;
   category.logoSvg = req.body.logoSvg;
   category.logoJson = req.body.logoJson;
   let logo = new Logo().find({ name: req.body.logoName });
@@ -45,6 +46,7 @@ router.post("/", validateCategory, auth, admin, async (req, res) => {
   category.logoTitle = req.body.logoTitle;
   category.paragraph = req.body.paragraph;
   category.logoName = req.body.logoName;
+  category.svgString = req.body.svgString;
   category.logoSvg = req.body.logoSvg;
   category.logoJson = req.body.logoJson;
 

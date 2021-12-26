@@ -10,6 +10,7 @@ const validateLogin = require("../../middlewares/validateLogin");
 const validateRegister = require("../../middlewares/validateRegister");
 const validateUpdated = require("../../middlewares/validateUpdated");
 const config = require("config");
+
 router.post("/register", validateRegister, async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send("User with given Email already exist");
@@ -18,12 +19,11 @@ router.post("/register", validateRegister, async (req, res) => {
   user.email = req.body.email;
   user.password = req.body.password;
   await user.generateHashedPassword();
-  await user.save();
   let token = jwt.sign(
     { _id: user._id, name: user.name, role: user.role },
     config.get("jwtPrivateKey")
   );
-
+  await user.save();
   return res.send(token);
 });
 router.post("/login", validateLogin, async (req, res) => {
@@ -40,7 +40,7 @@ router.post("/login", validateLogin, async (req, res) => {
 });
 
 //add logo into user's account
-router.put("/save/:id", async (req, res) => {
+router.put("/save/:id", auth, async (req, res) => {
   let id = req.params.id;
   let logoData = req.body;
   if (logoData.logoSvg.length > 1) {
@@ -52,7 +52,7 @@ router.put("/save/:id", async (req, res) => {
   return res.status(400).send("Logo is not appear");
 });
 //Delete User's profile Logo
-router.put("/deleteLogo/:id/", async (req, res) => {
+router.put("/deleteLogo/:id/", auth, async (req, res) => {
   let id = req.params.id;
   let logoData = req.body;
 
@@ -78,7 +78,7 @@ router.put("/deleteLogo/:id/", async (req, res) => {
   // console.log(logoData);
 });
 //update logo into user's account
-router.put("/save/:id/update", async (req, res) => {
+router.put("/save/:id/update", auth, async (req, res) => {
   let id = req.params.id;
   let logoData = req.body;
   // console.log(logoData);
@@ -105,7 +105,7 @@ router.put("/save/:id/update", async (req, res) => {
   return res.status(400).send("Logo not found");
 });
 //update user
-router.put("/:id", validateUpdated, async (req, res) => {
+router.put("/:id", validateUpdated, auth, admin, async (req, res) => {
   let user = await User.findById(req.params.id);
   user.name = req.body.name;
   user.email = req.body.email;
@@ -130,7 +130,7 @@ router.put("/:id", validateUpdated, async (req, res) => {
 });
 
 // get speicific user
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, admin, async (req, res) => {
   let user = await User.findById(req.params.id);
   if (!user) return res.status(400).send("You need to register ");
   return res.send(user);
@@ -141,8 +141,9 @@ router.delete("/:id", auth, admin, async (req, res) => {
   return res.send("user Deleted successfuly");
 });
 
-router.get("/", async (req, res) => {
+router.get("/", auth, admin, async (req, res) => {
   let users = await User.find();
+  console.log("Users 167> ", users);
   return res.send(users);
 });
 

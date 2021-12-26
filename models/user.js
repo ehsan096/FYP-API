@@ -43,4 +43,4 @@ function validateUserLogin(data) {
 module.exports.User = User;
 module.exports.validate = validateUser; //for sign up
 module.exports.validateUserLogin = validateUserLogin; // for login
-module.exports.validateUpdate = validateUpdate; // for login
+module.exports.validateUpdate = validateUpdate; // for update
