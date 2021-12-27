@@ -15,6 +15,8 @@ router.get("/", async (req, res) => {
 //update a record
 router.put("/:id", validateCategory, auth, admin, async (req, res) => {
   let category = await Category.findById(req.params.id);
+  let CategoryName = category.name;
+  let CategoryIconName = category.logoName;
   category.name = req.body.name;
   category.bannerTitle = req.body.bannerTitle;
   category.logoTitle = req.body.logoTitle;
@@ -23,12 +25,41 @@ router.put("/:id", validateCategory, auth, admin, async (req, res) => {
   category.svgString = req.body.svgString;
   category.logoSvg = req.body.logoSvg;
   category.logoJson = req.body.logoJson;
-  let logo = new Logo().find({ name: req.body.logoName });
-  logo.name = req.body.logoName;
-  logo.category = req.body.name;
-  logo.logoSvg = req.body.logoSvg;
-  logo.logoJson = req.body.logoJson;
-  await logo.save();
+
+  if (req.body.name !== CategoryName) {
+    let lg = await Logo.updateOne(
+      { name: CategoryIconName },
+      {
+        $set: {
+          name: req.body.logoName,
+          category: req.body.name,
+          logoSvg: req.body.logoSvg,
+          logoJson: req.body.logoJson,
+        },
+      }
+    );
+
+    let logo = await Logo.updateMany(
+      { category: CategoryName },
+      {
+        $set: {
+          category: req.body.name,
+        },
+      }
+    );
+  } else if (req.body.name === CategoryName) {
+    let lg = await Icon.updateOne(
+      { name: CategoryIconName },
+      {
+        $set: {
+          name: req.body.logoName,
+          category: req.body.name,
+          logoSvg: req.body.logoSvg,
+          logoJson: req.body.logoJson,
+        },
+      }
+    );
+  }
 
   await category.save();
   return res.send(category);

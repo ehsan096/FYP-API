@@ -15,24 +15,56 @@ router.get("/", async (req, res) => {
 //update a record
 router.put("/:id", validateIcnCategory, auth, admin, async (req, res) => {
   let category = await IconCategory.findById(req.params.id);
-  category.name = req.body.name;
-  category.d = req.body.d;
-  category.color = req.body.color;
-  category.iconName = req.body.iconName;
+  let CategoryName = category.name;
+  let CategoryIconName = category.iconName;
+  if (category) {
+    category.name = req.body.name;
+    category.d = req.body.d;
+    category.color = req.body.color;
+    category.iconName = req.body.iconName;
 
-  let logo = new Icon().find({ name: req.body.logoName });
-  logo.name = req.body.iconNamed;
-  logo.category = req.body.name;
-  logo.d = req.body.d;
-  await logo.save();
+    if (req.body.name !== CategoryName) {
+      let lg = await Icon.updateOne(
+        { name: CategoryIconName },
+        {
+          $set: {
+            name: req.body.iconName,
+            category: req.body.name,
+            d: req.body.d,
+          },
+        }
+      );
 
-  await category.save();
-  return res.send("Icon category Updated successfuly");
+      let logo = await Icon.updateMany(
+        { category: CategoryName },
+        {
+          $set: {
+            category: req.body.name,
+          },
+        }
+      );
+    } else if (req.body.name === CategoryName) {
+      let lg = await Icon.updateOne(
+        { name: CategoryIconName },
+        {
+          $set: {
+            name: req.body.iconName,
+            category: req.body.name,
+            d: req.body.d,
+          },
+        }
+      );
+    }
+
+    await category.save();
+    return res.send("Icon category Updated successfuly");
+  }
+  return res.status(400).send("Category not found to update");
 });
 //Delete a record
 router.delete("/:id", auth, admin, async (req, res) => {
-  let category = await Category.findByIdAndDelete(req.params.id);
-  return res.send(category);
+  let category = await IconCategory.findByIdAndDelete(req.params.id);
+  return res.send("category deleted Successfuly");
 });
 
 router.post("/", validateIcnCategory, auth, admin, async (req, res) => {
@@ -48,6 +80,6 @@ router.post("/", validateIcnCategory, auth, admin, async (req, res) => {
   await logo.save();
 
   await category.save();
-  return res.send("Category  created successfuly");
+  return res.send("Category created successfuly");
 });
 module.exports = router;

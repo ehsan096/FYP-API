@@ -130,7 +130,7 @@ router.put("/:id", validateUpdated, auth, admin, async (req, res) => {
 });
 
 // get speicific user
-router.get("/:id", auth, admin, async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   let user = await User.findById(req.params.id);
   if (!user) return res.status(400).send("You need to register ");
   return res.send(user);
