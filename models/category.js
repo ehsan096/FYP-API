@@ -24,7 +24,7 @@ function validateCategory(data) {
     svgString: Joi.string().min(3).required(),
     logoName: Joi.string().min(3).required(),
     logoSvg: Joi.string().min(3).required(),
-    logoJson: Joi.string().min(3),
+    logoJson: Joi.string().allow("").optional(),
   });
   return schema.validate(data, { abortEarly: false });
 }

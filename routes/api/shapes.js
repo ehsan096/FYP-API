@@ -26,6 +26,12 @@ router.delete("/:id", auth, admin, async (req, res) => {
 });
 //Insert a record
 router.post("/", validateShapes, auth, admin, async (req, res) => {
+  let shp = await Shape({ name: req.body.name });
+  if (shp) {
+    return res
+      .status(401)
+      .send(`${req.body.name} shape already exist please change Shape Name`);
+  }
   let shape = new Shape();
   shape.name = req.body.name;
   shape.d = req.body.d;

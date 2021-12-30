@@ -19,8 +19,8 @@ function validateLogo(data) {
   const schema = Joi.object({
     name: Joi.string().min(3).max(100).required(),
     category: Joi.string().min(3).max(100).required(),
-    logoSvg: Joi.string().min(10).required(),
-    logoJson: Joi.string().min(10),
+    logoSvg: Joi.string().min(3).required(),
+    logoJson: Joi.string().allow("").optional(),
   });
   return schema.validate(data, { abortEarly: false });
 }

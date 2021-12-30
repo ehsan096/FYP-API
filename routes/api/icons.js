@@ -27,6 +27,10 @@ router.delete("/:id", auth, admin, async (req, res) => {
 });
 //Insert a record
 router.post("/", validateIcons, auth, admin, async (req, res) => {
+  let icon = await Icon.findOne({ name: req.body.name });
+  if (icon && icon.category === req.body.category) {
+    return res.status(401).send(`${req.body.name} icon already exist`);
+  }
   let logo = new Icon();
   logo.name = req.body.name;
   logo.category = req.body.category;

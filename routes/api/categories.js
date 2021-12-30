@@ -15,54 +15,79 @@ router.get("/", async (req, res) => {
 //update a record
 router.put("/:id", validateCategory, auth, admin, async (req, res) => {
   let category = await Category.findById(req.params.id);
-  let CategoryName = category.name;
-  let CategoryIconName = category.logoName;
-  category.name = req.body.name;
-  category.bannerTitle = req.body.bannerTitle;
-  category.logoTitle = req.body.logoTitle;
-  category.paragraph = req.body.paragraph;
-  category.logoName = req.body.logoName;
-  category.svgString = req.body.svgString;
-  category.logoSvg = req.body.logoSvg;
-  category.logoJson = req.body.logoJson;
+  let chkCat = await Category.findOne({ name: req.body.name });
+  if (chkCat && chkCat.name !== category.name) {
+    return res
+      .status(401)
+      .send(
+        `${req.body.name} Category already exist, Please change Category Name`
+      );
+  }
+  let icon = await Logo.findOne({ name: req.body.logoName });
 
   if (req.body.name !== CategoryName) {
-    let lg = await Logo.updateOne(
-      { name: CategoryIconName },
-      {
-        $set: {
-          name: req.body.logoName,
-          category: req.body.name,
-          logoSvg: req.body.logoSvg,
-          logoJson: req.body.logoJson,
-        },
-      }
-    );
+    if (icon && icon.category === check.req.body.name) {
+      return res
+        .status(401)
+        .send(
+          `${req.body.logoName} Logo already exist please change Logo Name`
+        );
+    }
+    if (category) {
+      let lg = await Logo.updateOne(
+        { name: CategoryIconName },
+        {
+          $set: {
+            name: req.body.logoName,
+            category: req.body.name,
+            logoSvg: req.body.logoSvg,
+            logoJson: req.body.logoJson,
+          },
+        }
+      );
 
-    let logo = await Logo.updateMany(
-      { category: CategoryName },
-      {
-        $set: {
-          category: req.body.name,
-        },
+      let logo = await Logo.updateMany(
+        { category: CategoryName },
+        {
+          $set: {
+            category: req.body.name,
+          },
+        }
+      );
+    } else if (req.body.name === CategoryName) {
+      if (icon && icon.category === check.req.body.name) {
+        return res
+          .status(401)
+          .send(
+            `${req.body.logoName} Logo already exist please change Logo Name`
+          );
       }
-    );
-  } else if (req.body.name === CategoryName) {
-    let lg = await Icon.updateOne(
-      { name: CategoryIconName },
-      {
-        $set: {
-          name: req.body.logoName,
-          category: req.body.name,
-          logoSvg: req.body.logoSvg,
-          logoJson: req.body.logoJson,
-        },
-      }
-    );
+      let lg = await Icon.updateOne(
+        { name: CategoryIconName },
+        {
+          $set: {
+            name: req.body.logoName,
+            category: req.body.name,
+            logoSvg: req.body.logoSvg,
+            logoJson: req.body.logoJson,
+          },
+        }
+      );
+    }
+    let CategoryName = category.name;
+    let CategoryIconName = category.logoName;
+    category.name = req.body.name;
+    category.bannerTitle = req.body.bannerTitle;
+    category.logoTitle = req.body.logoTitle;
+    category.paragraph = req.body.paragraph;
+    category.logoName = req.body.logoName;
+    category.svgString = req.body.svgString;
+    category.logoSvg = req.body.logoSvg;
+    category.logoJson = req.body.logoJson;
+
+    await category.save();
+    return res.send("Logo Category Updated");
   }
-
-  await category.save();
-  return res.send(category);
 });
 //Delete a record
 router.delete("/:id", auth, admin, async (req, res) => {
@@ -71,6 +96,14 @@ router.delete("/:id", auth, admin, async (req, res) => {
 });
 
 router.post("/", validateCategory, auth, admin, async (req, res) => {
+  let categories = await Category.findOne({ name: req.body.name });
+
+  if (categories) {
+    console.log("Category found ", categories.name);
+    return res
+      .status(401)
+      .send(`Category "${categories.name}" is already exist`);
+  }
   let category = new Category();
   category.name = req.body.name;
   category.bannerTitle = req.body.bannerTitle;
@@ -86,9 +119,11 @@ router.post("/", validateCategory, auth, admin, async (req, res) => {
   logo.category = req.body.name;
   logo.logoSvg = req.body.logoSvg;
   logo.logoJson = req.body.logoJson;
+
   await logo.save();
 
   await category.save();
-  return res.send(category);
+  return res.send("Category added successfuly");
 });
+
 module.exports = router;
