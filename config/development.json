@@ -1,4 +1,4 @@
 {
-  "db": "mongodb://localhost/fypcrud",
+  "db": "mongodb+srv://ehsan:ehsan786@logomaker.wicwg.mongodb.net/logoMaker",
   "jwtPrivateKey": "SomePrivateKey"
 }
