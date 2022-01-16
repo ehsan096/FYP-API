@@ -5,6 +5,10 @@ var userSchema = mongoose.Schema({
   name: String,
   email: String,
   password: String,
+  resetToken: {
+    type: String,
+    default: "",
+  },
   logos: [{}],
   role: {
     type: String,

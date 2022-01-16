@@ -4,6 +4,7 @@ const validateIcons = require("../../middlewares/validateIcon");
 const auth = require("../../middlewares/auth");
 const admin = require("../../middlewares/admin");
 var { Icon } = require("../../models/icon");
+var { IconCategory } = require("../../models/iconCategory");
 //get logos
 router.get("/", async (req, res) => {
   // console.log(req.user);
@@ -13,7 +14,28 @@ router.get("/", async (req, res) => {
 
 //update a record
 router.put("/:id", validateIcons, auth, admin, async (req, res) => {
+  let logoFind = await Icon.findOne({ name: req.body.name });
+  // let logo = await Logo.findById(req.params.id);
+
+  if (logoFind && logoFind.category === req.body.category) {
+    return res.status(401).send(`Name should be unique in unique category `);
+  }
+
   let icon = await Icon.findById(req.params.id);
+  let category = await IconCategory.findOne({ iconName: icon.name });
+  if (category) {
+    if (category.name !== req.body.category) {
+      return res
+        .status(401)
+        .send(`you cannot change Category of this Icon, this is Front Icon`);
+    }
+    category.name = category.name;
+    category.d = req.body.d;
+    category.color = category.color;
+    category.iconName = req.body.name;
+    await category.save();
+  }
+  // let icon = await Icon.findById(req.params.id);
   icon.name = req.body.name;
   icon.category = req.body.category;
   icon.d = req.body.d;
